@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  mobsf:
+    environment:
+      MOBSF_API_KEY: 0c49ba3dcff9e0924bd0f8ba0c631b775edbf1425d4c9b9494b7cc2882e8b98f
+    image: opensecurity/mobile-security-framework-mobsf:latest
+    ports:
+    - mode: ingress
+      target: 8000
+      published: 8000
+      protocol: tcp
+  scan:
+    depends_on:
+    - mobsf
+    environment:
+      APP_PATH: /app/target/android.apk
+      REPORT_PATH: /app/output/
+      ENDPOINT_DELETE_SCAN: /api/v1/delete_scan
+      ENDPOINT_DOWNLOAD_JSON_REPORT: /api/v1/report_json
+      ENDPOINT_DOWNLOAD_PDF_REPORT: /api/v1/download_pdf
+      ENDPOINT_RECENT_SCANS: /api/v1/scans
+      ENDPOINT_SCAN_APP: /api/v1/scan
+      ENDPOINT_UPLOAD_APP: /api/v1/upload
+      MOBSF_API_KEY: 0c49ba3dcff9e0924bd0f8ba0c631b775edbf1425d4c9b9494b7cc2882e8b98f
+      MOBSF_SERVER: http://mobsf:8000
+    image: overwatchheir/mobsf-ci:latest
+    volumes:
+    - type: bind
+      source: /home
+      target: /app/output
+    - type: bind
+      source: /home
+      target: /app/target
