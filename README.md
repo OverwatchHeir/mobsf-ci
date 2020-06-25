@@ -25,12 +25,12 @@ In order to use this repository, the following requirements must be fullfiled:
 
 Get the Docker App image from Docker Hub:
 ```
-docker pull overwatchheir/mobsf-ci.dockerapp:latest-invoc
+docker pull overwatchheir/mobsf-ci.dockerapp:0.1.0-invoc
 ```
 
 The easiest way to use this repository is by using [docker app](https://docs.docker.com/app/working-with-app/). Simply run:
 ```
-docker app render overwatchheir/mobsf-ci.dockerapp:latest --set target_folder=<path to the folder that contains the APK> --set target_apk=<apk name> --set output_folder=<path to folder where the report will be written> | docker-compose -f - up --exit-code-from scan
+docker app render overwatchheir/mobsf-ci.dockerapp:0.1.0 --set target_folder=<path to the folder that contains the APK> --set target_apk=<apk name> --set output_folder=<path to folder where the report will be written> | docker-compose -f - up --exit-code-from scan
 ```
 
 ## CI Integration 
