@@ -106,6 +106,32 @@ def upload_app():
         sys.exit(1)
 
 
+def scan_app(data):
+
+    # Requesting an APP scan to MOBSF server
+
+    try:
+        response = session.post(
+            url=SERVER + os.getenv('ENDPOINT_SCAN_APP'),
+            data=json.loads(data),
+            headers={"Authorization": API_KEY})
+
+        response.raise_for_status()
+
+        if response.status_code == 200:
+            print('[INFO]: Scan requested')
+
+    except requests.exceptions.Timeout as errt:
+        print("[ERROR]: While scanning the APP. ", errt)
+        sys.exit(1)
+    except requests.exceptions.ConnectionError as errc:
+        print("[ERROR]: While scanning the APP. ", errc)
+        sys.exit(1)
+    except requests.exceptions.HTTPError as errh:
+        print("[ERROR]: While scanning the APP. ", errh)
+        sys.exit(1)
+
+
 def download_pdf_report(scan_hash):
 
     # Generating a PDF report from an Static Analysis
@@ -195,32 +221,6 @@ def delete_scan_record(scan_hash):
     else:
         print("ERROR while deleting the analysis record")
 
-    
-def scan_app(data):
-
-    # Requesting an APP scan to MOBSF server
-
-    try:
-        response = session.post(
-            url=SERVER + os.getenv('ENDPOINT_SCAN_APP'),
-            data=json.loads(data),
-            headers={"Authorization": API_KEY})
-
-        response.raise_for_status()
-
-        if response.status_code == 200:
-            print('[INFO]: Scan requested')
-
-    except requests.exceptions.Timeout as errt:
-        print("[ERROR]: While scanning the APP. ", errt)
-        sys.exit(1)
-    except requests.exceptions.ConnectionError as errc:
-        print("[ERROR]: While scanning the APP. ", errc)
-        sys.exit(1)
-    except requests.exceptions.HTTPError as errh:
-        print("[ERROR]: While scanning the APP. ", errh)
-        sys.exit(1)
-
 
 def get_recent_scan():
     
@@ -266,12 +266,17 @@ def get_recent_scan():
     print()
 
 
-if __name__ == '__main__':
+def init_http_session(retries=5):
 
     session = requests.Session()
     adapter = requests.adapters.HTTPAdapter(max_retries=5)
     session.mount('http://', adapter)
-        
+
+    return session
+
+if __name__ == '__main__':
+
+    session = init_http_session()        
     SERVER = get_server_url()
     APP_PATH = os.getenv('APP_PATH')
     API_KEY = get_api_key()
@@ -282,6 +287,5 @@ if __name__ == '__main__':
         scan_hash, n_scans = get_recent_scan()
         download_pdf_report(scan_hash=scan_hash)
         download_json_report(scan_hash=scan_hash)
-            
-        turn_mobsf_server_down()
+
         
