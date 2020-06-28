@@ -63,17 +63,6 @@ def mobsf_server_up(url):
         sys.exit(1)
 
 
-def turn_mobsf_server_down():
-    
-    try:
-        print('[INFO]: Turning MobSF server down')
-        subprocess.call('fuser -k -n tcp 8000', shell=True)
-        print('[INFO]: MobSF server down')
-
-    except OSError as err_os:
-        print('[ERROR]: ', err_os)
-
-
 def upload_app():
 
     # Uploading Android APP to MobSF Server
